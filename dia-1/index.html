@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🚚 Ejercicio en pareja · La Ruta del Sabor · Instrucciones</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="badge">MÓDULO 6 · LECCIÓN 4 · EJERCICIO EN PAREJA</div>
+  <h1>🚚 La Ruta del Sabor — Comandera de Food Truck</h1>
+  <p>Apliquen todo lo que vieron hoy sobre <strong>manejo de eventos</strong> (más el <code class="inline">v-model</code> de la clase anterior) construyendo un producto real: una comandera de pedidos.</p>
+</header>
+
+<main style="max-width:900px; margin:0 auto; padding:2rem clamp(1rem,4vw,3rem);">
+
+  <!-- HISTORIA -->
+  <section class="card">
+    <h2>🎬 La historia</h2>
+    <p>Su amiga <strong>Dani</strong> abrió un food truck y está feliz... hasta que llega la hora punta. Toma los pedidos en una libreta, se le caen los papeles, suma mal los totales y la fila crece.</p>
+    <p>Les pidió a ustedes —su equipo de desarrollo— que le construyan una <strong>comandera digital</strong>: una pantalla donde toque los productos, arme el pedido y vea el total al instante.</p>
+    <div class="concept">
+      Esto no es un ejercicio de juguete: <strong>es exactamente cómo funciona un Punto de Venta (POS) real</strong> de cualquier local. Hoy construyen la primera versión.
+    </div>
+  </section>
+
+  <!-- EQUIPO: DIVISIÓN DEL TRABAJO -->
+  <section class="card">
+    <h2>👥 Cómo se reparten el trabajo — equipo de 2</h2>
+    <p>Este es un trabajo en equipo <strong>de verdad</strong>: <strong>NO</strong> se turnan un teclado. Se dividen el proyecto en <strong>dos frentes</strong> y cada persona es <strong>dueña</strong> de su parte. Al final, integran las dos piezas y prueban juntos.</p>
+
+    <div class="concept">
+      <strong>👤 Persona A — "Front de venta" (agregar y totalizar)</strong>
+      <ul style="margin:.3rem 0;">
+        <li>Que al hacer clic en el menú, el producto entre al pedido → <strong>Requisito 1</strong></li>
+        <li>Que el <strong>total</strong> se calcule y se muestre → <strong>Requisito 2</strong></li>
+        <li>El <strong>estado vacío</strong> del ticket → <strong>Requisito 3</strong></li>
+      </ul>
+      <em>En una frase: A hace que el pedido se <strong>llene</strong> y el total salte.</em>
+    </div>
+
+    <div class="concept">
+      <strong>👤 Persona B — "Gestión del pedido" (editar y cobrar)</strong>
+      <ul style="margin:.3rem 0;">
+        <li>Botones <code class="inline">+ − ✕</code> para editar cada línea → <strong>Requisitos 4 y 5</strong></li>
+        <li>Nombre del cliente con <code class="inline">v-model</code> → <strong>Requisito 6</strong></li>
+        <li>Cobrar sin recargar → <strong>Requisito 7</strong></li>
+      </ul>
+      <em>En una frase: B hace que el pedido se pueda <strong>editar</strong> y <strong>cerrar</strong>.</em>
+    </div>
+
+    <p><strong>Nivel 3 (notas y descuento):</strong> repártanse los requisitos 8 y 9 que queden, uno cada uno.</p>
+
+    <div class="warn">
+      <strong>⚠️ El punto de integración (léanlo juntos ANTES de empezar):</strong> los dos trabajan sobre el <strong>mismo estado</strong> <code class="inline">pedido</code>. Para que sus piezas encajen, <strong>acuerden desde el inicio</strong> la forma de cada producto del pedido:
+      <br><code class="inline">{ id, emoji, nombre, precio, cantidad }</code>.
+      <br>Si A guarda los productos con esa forma, los botones de B funcionarán sin tocar nada. Ese acuerdo <strong>es</strong> el trabajo en equipo.
+    </div>
+
+    <div class="tip"><strong>Cómo dividir en la práctica:</strong> el componente es uno solo, así que acuerden las partes y trabajen sobre el mismo archivo (cada quien sus métodos y su parte del <code class="inline">&lt;template&gt;</code>), o en dos computadores y luego juntan las piezas. Lo importante: <strong>cada quien responde por su parte</strong> y al final <strong>integran y prueban el flujo completo entre los dos</strong>.</div>
+  </section>
+
+  <!-- QUÉ CONSTRUYEN -->
+  <section class="card">
+    <h2>🎯 Qué van a construir</h2>
+    <p>Una comandera con dos zonas: el <strong>menú</strong> (se toca para agregar) y el <strong>ticket</strong> (el pedido con su total).</p>
+    <pre><code>┌─────────────────────────┬──────────────────────────┐
+│   MENÚ (tocar productos) │   TICKET / PEDIDO        │
+│                          │                          │
+│  🍔 Hamburguesa  $5.500  │   Cliente: [__________]  │
+│  🌭 Completo     $3.200  │   ────────────────────   │
+│  🍕 Pizza        $6.800  │   🍔 Hamburguesa  x2  ✕  │
+│  🥤 Bebida       $1.500  │   🥤 Bebida       x1  ✕  │
+│  🍟 Papas        $2.900  │   ────────────────────   │
+│  🌮 Taco         $4.100  │   TOTAL:        $12.500  │
+│                          │   [ Cobrar y cerrar ]    │
+└─────────────────────────┴──────────────────────────┘</code></pre>
+    <div class="warn">En el <strong>código base</strong> (más abajo, listo para copiar) el <strong>menú ya está construido</strong> (úsenlo de ejemplo) y el <strong>CSS está listo</strong>. Ustedes <strong>construyen el ticket</strong> (el HTML del pedido, dentro del <code class="inline">&lt;template&gt;</code>) <strong>y toda la lógica</strong> en <code class="inline">setup()</code>: el estado, los métodos y los eventos. Sigan las pistas del propio código y los requisitos de aquí abajo.</div>
+  </section>
+
+  <!-- REQUISITOS -->
+  <section class="card">
+    <h2>✅ Requisitos</h2>
+    <p>Van por niveles. <strong>Terminen el Nivel 1 completo antes de pasar al 2.</strong> No salten.</p>
+
+    <h3 class="sub">🟢 Nivel 1 — El pedido básico (obligatorio)</h3>
+    <ol>
+      <li><span class="pill">👤 A</span> <strong>Agregar productos al ticket.</strong> Al hacer <strong>clic</strong> en una tarjeta del menú, ese producto entra al pedido. Si ya estaba, súmale <strong>1</strong> a su cantidad (no lo dupliques).</li>
+      <li><span class="pill">👤 A</span> <strong>Mostrar el total.</strong> Debajo del ticket, calcula y muestra la <strong>suma total</strong> del pedido. Debe actualizarse solo cada vez que cambie el pedido.</li>
+      <li><span class="pill">👤 A</span> <strong>Estado vacío.</strong> Si el ticket no tiene productos, muestra el mensaje "Aún no hay productos".</li>
+    </ol>
+
+    <h3 class="sub">🟡 Nivel 2 — Editar el pedido</h3>
+    <ol start="4">
+      <li><span class="pill">👤 B</span> <strong>Aumentar y disminuir cantidad.</strong> Cada línea del ticket tiene botones <code class="inline">+</code> y <code class="inline">−</code>. Si la cantidad llega a <strong>0</strong>, ese producto <strong>desaparece</strong> del ticket.</li>
+      <li><span class="pill">👤 B</span> <strong>Eliminar una línea.</strong> El botón <code class="inline">✕</code> borra ese producto del pedido completo.</li>
+      <li><span class="pill">👤 B</span> <strong>Nombre del cliente.</strong> Un campo de texto donde Dani anota el nombre. Úsalo con <code class="inline">v-model</code>.</li>
+    </ol>
+    <div class="warn"><strong>Pista de eventos (para B):</strong> el botón <code class="inline">✕</code> está dentro de la fila. Si la fila también reacciona al clic, usa el modificador correcto para que el clic del <code class="inline">✕</code> <strong>no</strong> dispare también el de la fila. (Repasa <code class="inline">.stop</code>.)</div>
+
+    <h3 class="sub">🔴 Nivel 3 — Desafío (si les da el ritmo)</h3>
+    <ol start="7">
+      <li><span class="pill">👤 B</span> <strong>Cobrar sin recargar.</strong> El botón "Cobrar y cerrar" está dentro de un <code class="inline">&lt;form&gt;</code>. Al enviarlo debe mostrar un mensaje tipo <em>"✅ Pedido de {cliente} cobrado: $XX"</em> y <strong>vaciar</strong> el ticket — <strong>sin que la página se recargue</strong>. (Repasa <code class="inline">@submit.prevent</code>.)</li>
+      <li><span class="pill">👤 A</span> <strong>Nota rápida con Enter.</strong> Un input "Nota para la cocina" (ej: "sin cebolla"). Al presionar <strong>Enter</strong> se agrega a una lista de notas visibles. (Repasa <code class="inline">@keydown.enter</code>.)</li>
+      <li><span class="pill">👤 A</span> <strong>Descuento por tecla.</strong> Un botón "Aplicar descuento 10%" que solo funcione <strong>una vez</strong> por pedido. (Repasa <code class="inline">.once</code>.)</li>
+    </ol>
+  </section>
+
+  <!-- CONCEPTOS OBLIGATORIOS -->
+  <section class="card">
+    <h2>🧠 Conceptos que DEBEN aparecer en su solución</h2>
+    <p>Es la lista de lo que aprendieron hoy. Que no falte ninguno del nivel que alcancen:</p>
+    <div class="concept">
+      <ul style="margin:.2rem 0;">
+        <li><code class="inline">@click</code> para agregar productos y para los botones <code class="inline">+ − ✕</code></li>
+        <li><strong>Método manejador con argumento</strong> — ej: <code class="inline">agregar(producto)</code>, <code class="inline">quitar(id)</code></li>
+        <li><strong>Manejador en línea</strong> — una expresión corta directa en el <code class="inline">@click</code></li>
+        <li><code class="inline">.stop</code> — para que el <code class="inline">✕</code> no dispare el clic de la fila</li>
+        <li><code class="inline">@submit.prevent</code> — para cobrar sin recargar</li>
+        <li><code class="inline">@keydown.enter</code> — para la nota de cocina</li>
+        <li><code class="inline">.once</code> — para el descuento de una sola vez</li>
+        <li><code class="inline">v-model</code> — para el nombre del cliente y la nota (repaso Lección 3)</li>
+        <li>Un valor <strong>derivado</strong> (<code class="inline">computed</code>) para el total</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- PISTAS -->
+  <section class="card">
+    <h2>💡 Pistas técnicas — no es la solución, es el mapa</h2>
+    <div class="tip">
+      <ul style="margin:.2rem 0;">
+        <li>Cada producto del pedido necesita <strong>guardar su cantidad</strong>. Piensen: ¿un arreglo de objetos <code class="inline">{ id, nombre, precio, cantidad }</code>?</li>
+        <li>Para "si ya está, suma 1; si no, agrégalo": busquen el producto en el arreglo con <code class="inline">.find()</code>.</li>
+        <li>El <strong>total</strong> NO se guarda en una variable que actualizan a mano. Se <strong>calcula</strong> a partir del pedido con <code class="inline">computed</code>. Si lo actualizan manualmente, tarde o temprano se desincroniza. <strong>El dato manda, la vista lo refleja.</strong></li>
+        <li>Los métodos van dentro de <code class="inline">setup()</code> y se <strong>retornan</strong> para que el template los vea.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- LISTO -->
+  <section class="card">
+    <h2>🏁 ¿Cuándo está "listo"?</h2>
+    <p>Su comandera está lista cuando pueden hacer esta demo sin tocar código:</p>
+    <ol>
+      <li>Tocar 3 productos distintos → aparecen en el ticket con cantidad 1 cada uno.</li>
+      <li>Tocar dos veces el mismo → queda en cantidad 2.</li>
+      <li>El total cuadra con la suma real.</li>
+      <li>Bajar una cantidad a 0 → el producto desaparece.</li>
+      <li><code class="inline">✕</code> borra una línea <strong>sin</strong> seleccionar/alterar la fila.</li>
+      <li>Escribir el nombre del cliente y "Cobrar" → mensaje correcto y ticket vacío, <strong>sin recargar</strong>.</li>
+    </ol>
+    <div class="tip">Si los 6 pasos funcionan: <strong>felicitaciones, construyeron un POS de verdad.</strong> 🎉</div>
+  </section>
+
+  <!-- CÓDIGO BASE PARA COPIAR -->
+  <section class="card" id="codigo">
+    <h2>📋 Código base — cópienlo para empezar</h2>
+    <p>Este es su punto de partida: tiene la estructura de un <strong>componente Vue</strong> (<code class="inline">&lt;template&gt;</code> + <code class="inline">&lt;script&gt;</code> con Composition API + <code class="inline">&lt;style&gt;</code>). El <strong>menú ya está hecho</strong> (es su ejemplo) y los estilos vienen incluidos. Copien <strong>todo</strong> el bloque y péguenlo dentro de un componente de su proyecto para empezar a construir el ticket.</p>
+    <button class="btn" id="btnCopiar" onclick="copiarCodigo()">📋 Copiar código</button>
+    <span id="copiadoMsg" style="margin-left:.6rem; color:var(--primary); font-weight:700; display:none;">✅ ¡Copiado!</span>
+    <pre style="margin-top:.8rem; max-height:460px;"><code id="codigoStarter">&lt;template&gt;
+  &lt;div class=&quot;pos&quot;&gt;
+
+    &lt;!-- ================= ZONA MENÚ (EJEMPLO YA HECHO) ================= --&gt;
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;🍔 Menú — toca para agregar&lt;/h2&gt;
+
+      &lt;!--
+        👀 ESTO YA ESTÁ HECHO Y ES SU EJEMPLO DE REFERENCIA.
+        Fíjense cómo se recorre una lista con v-for y cómo se lee cada dato.
+        Repliquen esta misma técnica para construir el TICKET de la derecha.
+
+        TODO 1 [PERSONA A]: falta lo importante -&gt; que al hacer CLIC en una tarjeta
+        se agregue ese producto al pedido. Conecten @click con el método agregar(p).
+      --&gt;
+      &lt;div class=&quot;menu-grid&quot;&gt;
+        &lt;div class=&quot;food-card&quot; v-for=&quot;p in menu&quot; :key=&quot;p.id&quot;&gt;
+          &lt;div class=&quot;emoji&quot;&gt;{{ p.emoji }}&lt;/div&gt;
+          &lt;div class=&quot;nom&quot;&gt;{{ p.nombre }}&lt;/div&gt;
+          &lt;div class=&quot;pre&quot;&gt;${{ p.precio.toLocaleString(&#x27;es-CL&#x27;) }}&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+    &lt;!-- ================= ZONA TICKET (LA CONSTRUYEN USTEDES) ================= --&gt;
+    &lt;section class=&quot;card&quot;&gt;
+      &lt;h2&gt;🧾 Ticket del pedido&lt;/h2&gt;
+
+      &lt;!--
+        🔨 CONSTRUYAN USTEDES TODO ESTE PANEL. Guíense por el menú de arriba (v-for)
+           y por los Requisitos 1 a 7 de las instrucciones. Debe tener:
+
+           [B · Req 6] Un input para el nombre del cliente     -&gt; v-model=&quot;cliente&quot;
+           [A · Req 3] Un mensaje de &quot;Aún no hay productos&quot;    -&gt; v-if cuando el pedido esté vacío
+           [A · Req 1] La lista del pedido                     -&gt; v-for sobre &quot;pedido&quot;
+                       mostrando emoji, nombre y cantidad de cada item
+           [B · Req 4] Botones  −  y  +  en cada línea         -&gt; @click a disminuir(id) / aumentar(id)
+           [B · Req 5] Un botón  ✕  para eliminar la línea     -&gt; @click.stop a eliminar(id)  (¡ojo el .stop!)
+           [A · Req 2] El TOTAL del pedido                     -&gt; {{ total }}  (un computed)
+           [B · Req 7] Un &lt;form&gt; con botón &quot;Cobrar y cerrar&quot;   -&gt; @submit.prevent=&quot;cobrar&quot;
+
+        Pueden usar las clases de CSS ya listas (ver la sección &lt;style&gt; más abajo):
+        .ticket, .item, .qty, .mini, .mini.del, .total, .vacio, .btn
+      --&gt;
+      &lt;div class=&quot;ticket&quot;&gt;
+        &lt;h4&gt;Pedido&lt;/h4&gt;
+
+        &lt;!-- ✍️ ESCRIBAN SU CÓDIGO DEL TICKET AQUÍ --&gt;
+
+      &lt;/div&gt;
+    &lt;/section&gt;
+
+  &lt;/div&gt;
+&lt;/template&gt;
+
+
+&lt;script&gt;
+import { ref, computed } from &#x27;vue&#x27;
+
+export default {
+  name: &#x27;ComandaPos&#x27;,
+  setup() {
+    // ---------- DATOS (ya listos, NO los cambies) ----------
+    const menu = ref([
+      { id: 1, emoji: &#x27;🍔&#x27;, nombre: &#x27;Hamburguesa&#x27;, precio: 5500 },
+      { id: 2, emoji: &#x27;🌭&#x27;, nombre: &#x27;Completo&#x27;,     precio: 3200 },
+      { id: 3, emoji: &#x27;🍕&#x27;, nombre: &#x27;Pizza&#x27;,        precio: 6800 },
+      { id: 4, emoji: &#x27;🥤&#x27;, nombre: &#x27;Bebida&#x27;,       precio: 1500 },
+      { id: 5, emoji: &#x27;🍟&#x27;, nombre: &#x27;Papas&#x27;,        precio: 2900 },
+      { id: 6, emoji: &#x27;🌮&#x27;, nombre: &#x27;Taco&#x27;,         precio: 4100 },
+    ])
+
+    // El pedido empieza vacío. ACUERDEN entre A y B la forma de cada item:
+    //   { id, emoji, nombre, precio, cantidad }
+    // Si A guarda los productos con esta forma, los botones de B funcionarán solos.
+    const pedido = ref([])
+
+    // ============================================================
+    //  🔨 AQUÍ CONSTRUYEN USTEDES. Nada está hecho a propósito.
+    //     Revisen las instrucciones para saber QUÉ hace cada pieza
+    //     y de QUIÉN es (Persona A / Persona B).
+    //
+    //  Van a necesitar declarar:
+    //
+    //    ESTADO (ref):
+    //      · cliente      [B] -&gt; texto del nombre del cliente
+    //      · mensaje      [B] -&gt; texto que se muestra al cobrar
+    //      · (Nivel 3) notaActual y notas [A]
+    //
+    //    MÉTODOS (funciones):
+    //      · agregar(p)     [A] -&gt; si el producto ya está, +1 a su cantidad;
+    //                              si no, agrégalo al pedido con cantidad 1
+    //      · aumentar(id)   [B] -&gt; sube en 1 la cantidad de ese producto
+    //      · disminuir(id)  [B] -&gt; baja en 1; si queda en 0, elimínalo del pedido
+    //      · eliminar(id)   [B] -&gt; saca esa línea del pedido por completo
+    //      · cobrar()       [B] -&gt; arma el mensaje con cliente y total, y vacía el pedido
+    //      · (Nivel 3) agregarNota() [A]
+    //
+    //    DERIVADO (computed):
+    //      · total          [A] -&gt; suma de precio * cantidad de todo el pedido
+    //                              (NO lo guarden en una variable a mano: calcúlenlo)
+    // ============================================================
+
+    // ...su código aquí...
+
+
+    // ⚠️ RETORNEN todo lo que use el &lt;template&gt;. Si algo no está aquí, NO aparece.
+    //    Empiecen por lo que ya existe y vayan agregando lo que creen arriba.
+    return {
+      menu, pedido,
+      // ...agreguen aquí: cliente, mensaje, agregar, aumentar, disminuir, eliminar, cobrar, total ...
+    }
+  }
+}
+&lt;/script&gt;
+
+
+&lt;style scoped&gt;
+/* Estilos del componente (ya listos). Las variables viven en .pos y las heredan los hijos. */
+.pos {
+  --panel: #1e293b; --ink: #e2e8f0; --muted: #94a3b8;
+  --primary: #42b883; --primary-2: #35495e; --line: #334155; --radius: 12px;
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 1.25rem;
+  font-family: &quot;Segoe UI&quot;, system-ui, -apple-system, sans-serif; color: var(--ink);
+}
+@media (max-width: 760px) { .pos { grid-template-columns: 1fr; } }
+
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 1.5rem 1.75rem;
+}
+.card &gt; h2 {
+  margin-top: 0; color: var(--primary);
+  border-bottom: 1px solid var(--line); padding-bottom: .6rem;
+}
+
+.menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: .7rem; }
+.food-card {
+  background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
+  padding: .8rem; text-align: center; cursor: pointer; transition: all .15s;
+}
+.food-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.food-card .emoji { font-size: 2rem; }
+.food-card .nom { font-weight: 700; color: #334155; font-size: .9rem; margin: .2rem 0; }
+.food-card .pre { color: var(--primary-2); font-weight: 700; }
+
+.ticket { background: #0f172a; color: #e2e8f0; border-radius: 12px; padding: 1rem 1.1rem; }
+.ticket h4 { margin: 0 0 .6rem; color: var(--primary); }
+.ticket .item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .4rem 0; border-bottom: 1px dashed #334155; font-size: .9rem;
+}
+.ticket .qty { display: inline-flex; gap: .3rem; align-items: center; }
+.mini { background: var(--primary); color: #0f172a; border: none; border-radius: 6px; width: 24px; height: 24px; font-weight: 800; cursor: pointer; }
+.mini.del { background: #ef4444; color: #fff; }
+.total { font-size: 1.4rem; font-weight: 800; color: var(--primary); text-align: right; margin-top: .6rem; }
+.vacio { color: #64748b; font-style: italic; text-align: center; padding: 1rem 0; }
+
+label { font-weight: 600; display: block; margin: .5rem 0 .25rem; color: #cbd5e1; }
+input[type=text] {
+  width: 100%; padding: .55rem .7rem; border: 1px solid #cbd5e1;
+  border-radius: 8px; font-size: .95rem; font-family: inherit; background: #fff; color: #1e293b;
+}
+input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(66,184,131,.25); }
+.btn { background: var(--primary); color: #0f172a; border: none; padding: .6rem 1.2rem; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: .95rem; }
+.pill { display: inline-block; background: #e2e8f0; color: #334155; padding: .15rem .6rem; border-radius: 999px; font-size: .8rem; margin: .15rem; }
+&lt;/style&gt;
+</code></pre>
+  </section>
+
+  <!-- CÓMO USAR -->
+  <section class="card">
+    <h2>🚀 Cómo poner a andar su componente</h2>
+    <p>Este código es un <strong>componente</strong>, así que vive dentro de un proyecto Vue (con Vite). Pasos:</p>
+    <ol>
+      <li>En su proyecto Vue, creen un archivo nuevo, por ejemplo <code class="inline">src/components/ComandaPos.vue</code>.</li>
+      <li>Presionen <strong>"Copiar código"</strong> aquí arriba y <strong>peguen</strong> todo dentro de ese archivo.</li>
+      <li>Úsenlo desde <code class="inline">App.vue</code>:
+        <pre style="margin-top:.6rem;"><code>&lt;template&gt;
+  &lt;ComandaPos /&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import ComandaPos from './components/ComandaPos.vue'
+export default { components: { ComandaPos } }
+&lt;/script&gt;</code></pre>
+      </li>
+      <li>Levanten el proyecto con <code class="inline">npm run dev</code> y abran la URL que les indica la terminal.</li>
+      <li>Cada vez que guarden, Vite recarga solo. Empiecen a construir el ticket. 🔨</li>
+    </ol>
+    <div class="warn"><strong>Ojo:</strong> un componente <code class="inline">.vue</code> <strong>no</strong> se abre con doble clic en el navegador — necesita el proyecto Vite corriendo. Lo que sí se publica en GitHub Pages es <strong>esta página de instrucciones</strong>, para que puedan copiar el código desde cualquier lugar.</div>
+  </section>
+
+  <footer>
+    Módulo 6 · Lección 4 · Ejercicio en pareja — La Ruta del Sabor · Manejo de Eventos en Vue.
+  </footer>
+
+</main>
+
+
+<script>
+  function mostrarCopiado() {
+    const msg = document.getElementById('copiadoMsg')
+    msg.style.display = 'inline'
+    setTimeout(() => { msg.style.display = 'none' }, 2500)
+  }
+  function copiarConFallback(texto) {
+    // Fallback para contextos sin Clipboard API (file://, http sin permiso)
+    const ta = document.createElement('textarea')
+    ta.value = texto
+    ta.style.position = 'fixed'
+    ta.style.opacity = '0'
+    document.body.appendChild(ta)
+    ta.focus(); ta.select()
+    try { document.execCommand('copy') } catch (e) {}
+    document.body.removeChild(ta)
+  }
+  function copiarCodigo() {
+    const codigo = document.getElementById('codigoStarter').textContent
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(codigo)
+        .then(mostrarCopiado)
+        .catch(() => { copiarConFallback(codigo); mostrarCopiado() })
+    } else {
+      copiarConFallback(codigo)
+      mostrarCopiado()
+    }
+  }
+</script>
+</body>
+</html>
