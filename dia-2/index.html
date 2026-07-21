@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>💸 FinTrack · Ejercicio en pareja · Componentes, Props y Eventos</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="badge">MÓDULO 6 · LECCIÓN 4 · DÍA 2 · EJERCICIO EN PAREJA</div>
+  <h1>💸 FinTrack — Control de Gastos en Equipo</h1>
+  <p>Construyan entre <strong>dos personas</strong> una app real de finanzas hecha con <strong>varios componentes Vue</strong> que se comunican por <strong>props</strong> (datos que bajan) y <strong>eventos</strong> (avisos que suben). Cada uno programa <strong>sus propios componentes</strong>, y al final <strong>unifican todo en un mismo repositorio Git</strong>. Regla de oro del día: <em>los datos bajan por props, los avisos suben por eventos.</em></p>
+</header>
+
+<main>
+
+  <!-- ============ HISTORIA ============ -->
+  <section class="card">
+    <h2>🎬 La historia</h2>
+    <p><strong>Cata</strong> terminó el mes sin saber en qué se le fue la plata. "Creo que gasté como $200 lucas… ¿o eran $400?". No tiene idea. Anota algunos gastos en el bloc de notas del teléfono, otros los olvida, y nunca suma nada.</p>
+    <p>Les pidió a ustedes —su equipo de desarrollo— una <strong>app para registrar gastos</strong>: que ella escriba cuánto gastó y en qué, que la app <strong>sume el total sola</strong> y le muestre <strong>en qué categoría se le va la plata</strong>.</p>
+    <div class="concept">
+      Esto no es un ejercicio de juguete: es <strong>exactamente</strong> cómo arranca cualquier app de finanzas (Fintonic, Mobills, Splitwise). Hoy construyen la primera versión… y la construyen <strong>como un equipo real</strong>, con el código repartido y unido por Git.
+    </div>
+  </section>
+
+  <!-- ============ QUÉ CONSTRUYEN ============ -->
+  <section class="card">
+    <h2>🎯 Qué van a construir</h2>
+    <p>Una app con dos zonas: la <strong>izquierda</strong> para registrar y listar gastos, la <strong>derecha</strong> con el resumen que se calcula solo.</p>
+    <pre><code>┌─ FinTrack ─────────────────────────────────────────────┐
+│  Nuevo gasto: [ Café ] [ $3.500 ] [ Comida ▾ ]  [ + ]  │
+│  Filtro: ( Todas )( Comida )( Transporte )( Súper )…    │
+├───────────────────────────────┬────────────────────────┤
+│  LISTA DE GASTOS              │  RESUMEN                │
+│  🍔 Café          $3.500  −+✕ │  Total gastado          │
+│  🚗 Uber          $6.200  −+✕ │     $128.400            │
+│  🛒 Súper        $42.000  −+✕ │  ─────────────────────  │
+│  🎬 Cine          $8.000  −+✕ │  🍔 Comida ████████ 45% │
+│                               │  🚗 Transp ████ 22%     │
+│  (si no hay: "Sin gastos aún")│  🎬 Ocio   ██ 12%       │
+└───────────────────────────────┴────────────────────────┘</code></pre>
+
+    <h3 class="sub">🧩 El árbol de componentes (esto es lo importante)</h3>
+    <p>La app NO es un solo archivo gigante. Son <strong>5 componentes</strong>, cada uno en su archivo <code class="inline">.vue</code>. El <strong>padre</strong> (<code class="inline">App.vue</code>) es el dueño de los datos; los <strong>hijos</strong> reciben props y emiten eventos.</p>
+    <div class="arbol">App.vue  <span class="j">· PADRE — dueño del estado (lo integran JUNTOS)</span>
+│
+├─ FormularioGasto.vue   <span class="a">· 👤 A</span>  → emite <b>@agregar</b>
+├─ PanelResumen.vue      <span class="a">· 👤 A</span>  ← recibe props <b>:total :por-categoria</b>
+│
+├─ FiltroCategoria.vue   <span class="b">· 👤 B</span>  → emite <b>@filtrar</b>
+└─ ItemGasto.vue (×N)    <span class="b">· 👤 B</span>  ← recibe prop <b>:gasto</b> → emite <b>@eliminar @ajustar</b></div>
+    <div class="tip"><strong>¿Por qué separar en archivos?</strong> Porque cada persona es <strong>dueña de sus archivos</strong> y así, cuando junten el código en Git, <strong>no van a chocar</strong> (no habrá conflictos de merge). Esto no es un truco del ejercicio: <strong>es la razón real por la que las apps se dividen en componentes.</strong></div>
+  </section>
+
+  <!-- ============ DIVISIÓN DEL TRABAJO ============ -->
+  <section class="card">
+    <h2>👥 Cómo se reparten el trabajo — equipo de 2</h2>
+    <p>Trabajo en equipo <strong>de verdad</strong>: <strong>NO</strong> se turnan un teclado. Cada persona es <strong>dueña de dos componentes</strong> y responde por ellos. Al final integran en <code class="inline">App.vue</code> y prueban el flujo completo juntos.</p>
+
+    <div class="concept">
+      <strong><span class="pill a">👤 Persona A</span> — "Registro y Resumen" (la plata entra y se resume)</strong>
+      <ul style="margin:.4rem 0;">
+        <li><code class="inline">FormularioGasto.vue</code> → el input donde Cata escribe el gasto y lo <strong>emite</strong> hacia arriba → <strong>Requisitos 1 y 2</strong></li>
+        <li><code class="inline">PanelResumen.vue</code> → recibe el total y el desglose por <strong>props</strong> y los muestra con barras → <strong>Requisitos 5 y 6</strong></li>
+      </ul>
+      <em>En una frase: A hace que el gasto <strong>entre</strong> y que el resumen <strong>se pinte</strong>.</em>
+    </div>
+
+    <div class="concept">
+      <strong><span class="pill b">👤 Persona B</span> — "Lista y Gestión" (los gastos se ven y se editan)</strong>
+      <ul style="margin:.4rem 0;">
+        <li><code class="inline">ItemGasto.vue</code> → una fila por gasto; botones para <strong>ajustar el monto</strong> y <strong>eliminar</strong>, que <strong>emite</strong> → <strong>Requisitos 3 y 4</strong></li>
+        <li><code class="inline">FiltroCategoria.vue</code> → los chips para filtrar la lista por categoría → <strong>Requisito 7</strong></li>
+      </ul>
+      <em>En una frase: B hace que los gastos se <strong>listen</strong>, se <strong>editen</strong> y se <strong>filtren</strong>.</em>
+    </div>
+
+    <p><strong>El padre <code class="inline">App.vue</code> (Requisitos 5, 6 y 8) lo arman JUNTOS</strong> — ahí es donde sus piezas se conectan. Es el punto de integración: sin él, cada componente es una isla.</p>
+  </section>
+
+  <!-- ============ EL CONTRATO ============ -->
+  <section class="card" id="contrato">
+    <h2>📜 El contrato de integración — LÉANLO JUNTOS ANTES DE ESCRIBIR CÓDIGO</h2>
+    <p>Este es <strong>el</strong> momento del trabajo en equipo. Antes de tocar el teclado, los dos acuerdan <strong>tres cosas</strong>. Si respetan este contrato, sus componentes van a encajar sin tener que arreglar nada al final.</p>
+
+    <h3 class="sub">1 · La forma de cada gasto (el objeto que viaja por toda la app)</h3>
+    <pre><code>{ id: 1, descripcion: 'Café', monto: 3500, categoria: 'Comida' }</code></pre>
+    <div class="warn"><code class="inline">monto</code> es un <strong>número</strong> (3500), NO un texto ("3500"). <code class="inline">categoria</code> es <strong>uno</strong> de estos cinco valores exactos: <code class="inline">'Comida'</code>, <code class="inline">'Transporte'</code>, <code class="inline">'Súper'</code>, <code class="inline">'Ocio'</code>, <code class="inline">'Otros'</code>.</div>
+
+    <h3 class="sub">2 · Los eventos que suben (hijo → padre)</h3>
+    <table class="contrato">
+      <tr><th>Componente</th><th>Emite</th><th>Con qué dato (payload)</th><th>Quién</th></tr>
+      <tr><td><code>FormularioGasto</code></td><td><code>agregar</code></td><td><code>{ descripcion, monto, categoria }</code> (¡sin id! el padre lo pone)</td><td><span class="pill a">A</span></td></tr>
+      <tr><td><code>ItemGasto</code></td><td><code>eliminar</code></td><td><code>id</code> (el número del gasto)</td><td><span class="pill b">B</span></td></tr>
+      <tr><td><code>ItemGasto</code></td><td><code>ajustar</code></td><td><code>id, delta</code> (ej: <code>id, 500</code> o <code>id, -500</code>)</td><td><span class="pill b">B</span></td></tr>
+      <tr><td><code>FiltroCategoria</code></td><td><code>filtrar</code></td><td><code>categoria</code> (texto; <code>'Todas'</code> = ver todo)</td><td><span class="pill b">B</span></td></tr>
+    </table>
+
+    <h3 class="sub">3 · Las props que bajan (padre → hijo)</h3>
+    <table class="contrato">
+      <tr><th>Componente</th><th>Recibe la prop</th><th>Tipo</th><th>Quién</th></tr>
+      <tr><td><code>PanelResumen</code></td><td><code>:total</code></td><td>Number</td><td><span class="pill a">A</span></td></tr>
+      <tr><td><code>PanelResumen</code></td><td><code>:por-categoria</code></td><td>Array de <code>{ nombre, emoji, monto, porcentaje }</code></td><td><span class="pill a">A</span></td></tr>
+      <tr><td><code>PanelResumen</code></td><td><code>:cantidad</code></td><td>Number</td><td><span class="pill a">A</span></td></tr>
+      <tr><td><code>ItemGasto</code></td><td><code>:gasto</code></td><td>Object (la forma de arriba)</td><td><span class="pill b">B</span></td></tr>
+      <tr><td><code>FiltroCategoria</code></td><td><code>:categorias</code> · <code>:activa</code></td><td>Array · String</td><td><span class="pill b">B</span></td></tr>
+    </table>
+    <div class="danger"><strong>Ojo con los nombres.</strong> En el <code class="inline">&lt;template&gt;</code> las props se escriben en <code class="inline">kebab-case</code> (<code class="inline">:por-categoria</code>) pero dentro del hijo se declaran en <code class="inline">camelCase</code> (<code class="inline">porCategoria</code>). Vue traduce solo. Los <strong>eventos</strong> mantienen su nombre igual en los dos lados (<code class="inline">emit('agregar')</code> ↔ <code class="inline">@agregar</code>).</div>
+  </section>
+
+  <!-- ============ SETUP PROYECTO + GIT ============ -->
+  <section class="card">
+    <h2>🚀 Paso 0 — Montar el proyecto y el repositorio (háganlo JUNTOS, una sola vez)</h2>
+    <p>Una <strong>sola persona</strong> del equipo hace esto en su computador y comparte el repo. Necesitan Node instalado.</p>
+    <ol>
+      <li><strong>Crear el proyecto Vue + Vite:</strong>
+        <pre><code>npm create vite@latest fintrack -- --template vue
+cd fintrack
+npm install</code></pre>
+      </li>
+      <li><strong>Dejar los estilos listos.</strong> Reemplacen el contenido de <code class="inline">src/style.css</code> con el bloque de CSS que está más abajo (sección "Estilos de la app"). Los estilos ya vienen resueltos: ustedes se concentran en la lógica.</li>
+      <li><strong>Crear la carpeta de componentes:</strong> <code class="inline">src/components/</code> y adentro los 4 archivos vacíos:
+        <code class="inline">FormularioGasto.vue</code>, <code class="inline">PanelResumen.vue</code>, <code class="inline">ItemGasto.vue</code>, <code class="inline">FiltroCategoria.vue</code>.</li>
+      <li><strong>Convertirlo en repositorio Git y subirlo a GitHub:</strong>
+        <pre><code>git init
+git add .
+git commit -m "chore: proyecto base FinTrack con Vite + Vue"
+
+# creen un repo vacío en github.com (sin README) y peguen su URL:
+git remote add origin https://github.com/USUARIO/fintrack.git
+git branch -M main
+git push -u origin main</code></pre>
+      </li>
+      <li><strong>La otra persona clona el repo:</strong>
+        <pre><code>git clone https://github.com/USUARIO/fintrack.git
+cd fintrack
+npm install</code></pre>
+      </li>
+      <li>Levanten el proyecto con <code class="inline">npm run dev</code> y abran la URL que muestra la terminal. Cada vez que guarden, Vite recarga solo. 🔥</li>
+    </ol>
+    <div class="warn"><strong>Agreguen a la persona que clona como colaborador</strong> del repo en GitHub (Settings → Collaborators), o si no, no va a poder hacer <code class="inline">push</code>.</div>
+  </section>
+
+  <!-- ============ FLUJO GIT ============ -->
+  <section class="card">
+    <h2>🔀 Cómo trabajar en paralelo sin pisarse (flujo Git)</h2>
+    <p>Cada persona trabaja en <strong>su propia rama</strong> y sobre <strong>sus propios archivos</strong>. Así el merge es limpio. Este es el flujo que usa cualquier equipo profesional:</p>
+    <ol>
+      <li>Antes de empezar, cada quien crea su rama desde <code class="inline">main</code> actualizado:
+        <pre><code># Persona A
+git checkout main &amp;&amp; git pull
+git checkout -b feat/persona-a
+
+# Persona B
+git checkout main &amp;&amp; git pull
+git checkout -b feat/persona-b</code></pre>
+      </li>
+      <li>Programan sus componentes, y van guardando avances con commits pequeños:
+        <pre><code>git add .
+git commit -m "feat: FormularioGasto emite el evento agregar"
+git push -u origin feat/persona-a</code></pre>
+      </li>
+      <li>Cuando cada uno termina sus componentes, abre un <strong>Pull Request</strong> en GitHub hacia <code class="inline">main</code>. Revísenlos <strong>juntos</strong> y háganles merge.</li>
+      <li><strong>La integración final</strong> (armar <code class="inline">App.vue</code> conectando todo): háganla juntos en una rama <code class="inline">feat/integracion</code>, o directo sobre <code class="inline">main</code> ya con los dos componentes mezclados. Prueben el flujo completo antes del último push.</li>
+    </ol>
+    <div class="tip"><strong>¿Por qué casi no habrá conflictos?</strong> Porque A toca <code class="inline">FormularioGasto.vue</code> y <code class="inline">PanelResumen.vue</code>, y B toca <code class="inline">ItemGasto.vue</code> y <code class="inline">FiltroCategoria.vue</code>. Archivos distintos = Git los mezcla sin problema. El único archivo compartido es <code class="inline">App.vue</code>, y por eso lo dejan <strong>para el final y lo hacen juntos</strong>.</div>
+  </section>
+
+  <!-- ============ REQUISITOS ============ -->
+  <section class="card">
+    <h2>✅ Requisitos</h2>
+    <p>Van por niveles. <strong>Terminen el Nivel 1 completo antes de pasar al 2.</strong> No salten.</p>
+
+    <h3 class="sub">🟢 Nivel 1 — El gasto entra y se muestra (obligatorio)</h3>
+    <ol>
+      <li><span class="pill a">👤 A</span> <strong>Formulario de gasto.</strong> En <code class="inline">FormularioGasto.vue</code>: un input de <strong>descripción</strong>, un input <strong>numérico</strong> de monto y un <code class="inline">&lt;select&gt;</code> de <strong>categoría</strong>, todos con <code class="inline">v-model</code>. (Repaso Lección 3.)</li>
+      <li><span class="pill a">👤 A</span> <strong>Emitir el gasto.</strong> Al enviar el <code class="inline">&lt;form&gt;</code> (con <code class="inline">@submit.prevent</code>), emite el evento <code class="inline">agregar</code> con el objeto <code class="inline">{ descripcion, monto, categoria }</code> y limpia los inputs. <strong>No</strong> agrega el gasto él mismo: solo avisa al padre.</li>
+      <li><span class="pill b">👤 B</span> <strong>Fila de gasto.</strong> En <code class="inline">ItemGasto.vue</code>: recibe un <code class="inline">gasto</code> por <strong>prop</strong> (con validación <code class="inline">type: Object, required: true</code>) y muestra su emoji de categoría, descripción y monto formateado.</li>
+      <li><span class="pill j">👥 A+B</span> <strong>Pintar la lista.</strong> En <code class="inline">App.vue</code>: guardan el gasto que llega por <code class="inline">@agregar</code> (poniéndole un <code class="inline">id</code> nuevo) y renderizan un <code class="inline">ItemGasto</code> por cada gasto con <code class="inline">v-for</code> y <code class="inline">:key</code>. Si la lista está vacía, muestren "Sin gastos aún".</li>
+    </ol>
+
+    <h3 class="sub">🟡 Nivel 2 — Editar y resumir</h3>
+    <ol start="5">
+      <li><span class="pill b">👤 B</span> <strong>Eliminar y ajustar.</strong> En <code class="inline">ItemGasto.vue</code>: un botón <code class="inline">✕</code> que emite <code class="inline">eliminar</code> con el <code class="inline">id</code>, y botones <code class="inline">−</code> / <code class="inline">+</code> que emiten <code class="inline">ajustar</code> con <code class="inline">(id, -500)</code> / <code class="inline">(id, 500)</code>. El padre es quien realmente borra o cambia el monto.</li>
+      <li><span class="pill a">👤 A</span> <strong>Panel de resumen.</strong> En <code class="inline">PanelResumen.vue</code>: recibe por props <code class="inline">total</code>, <code class="inline">cantidad</code> y <code class="inline">porCategoria</code> (con validación) y los pinta: el total grande, y una <strong>barra</strong> por categoría con su porcentaje.</li>
+      <li><span class="pill j">👥 A+B</span> <strong>Los cálculos (computed) en el padre.</strong> En <code class="inline">App.vue</code>: <code class="inline">total</code> = suma de los montos; <code class="inline">porCategoria</code> = arreglo con el monto y porcentaje de cada categoría. <strong>Son <code class="inline">computed</code>, NO variables que actualizan a mano.</strong> El dato manda, la vista lo refleja.</li>
+    </ol>
+
+    <h3 class="sub">🔴 Nivel 3 — Desafío (si les da el ritmo)</h3>
+    <ol start="8">
+      <li><span class="pill b">👤 B</span> <strong>Filtro por categoría.</strong> En <code class="inline">FiltroCategoria.vue</code>: chips (Todas / Comida / Transporte / …) que emiten <code class="inline">filtrar</code> con la categoría elegida. El padre filtra la lista mostrada. La categoría activa se marca distinto (recíbanla por la prop <code class="inline">activa</code>).</li>
+      <li><span class="pill a">👤 A</span> <strong>Presupuesto con <code class="inline">v-model</code> de componente.</strong> Un componente <code class="inline">MetaMensual.vue</code> con <code class="inline">defineModel()</code> para fijar un presupuesto; si el total lo supera, el resumen se pinta en rojo. (Repaso sección 9 de la guía: <code class="inline">v-model</code> en componentes.)</li>
+      <li><span class="pill j">👥 A+B</span> <strong>Persistencia.</strong> Guarden los gastos en <code class="inline">localStorage</code> para que sobrevivan al recargar.</li>
+    </ol>
+  </section>
+
+  <!-- ============ CONCEPTOS OBLIGATORIOS ============ -->
+  <section class="card">
+    <h2>🧠 Conceptos que DEBEN aparecer en su solución</h2>
+    <p>Es la lista de lo que aprendieron. Que no falte ninguno del nivel que alcancen:</p>
+    <div class="concept">
+      <ul style="margin:.2rem 0;">
+        <li><code class="inline">defineProps</code> con <strong>validación</strong> (type / required / default) — en <code class="inline">ItemGasto</code> y <code class="inline">PanelResumen</code></li>
+        <li><code class="inline">defineEmits</code> — declarar los eventos de cada hijo</li>
+        <li><code class="inline">emit</code> con <strong>payload</strong> — objeto (<code class="inline">agregar</code>) e id (<code class="inline">eliminar</code>)</li>
+        <li><code class="inline">v-for</code> + <code class="inline">:key</code> pasando datos por props (padre → <code class="inline">ItemGasto</code>)</li>
+        <li><strong>Comunicación entre hermanos</strong> vía el padre: <code class="inline">FormularioGasto</code> → <code class="inline">App</code> → <code class="inline">PanelResumen</code></li>
+        <li><code class="inline">computed</code> — para el total y el desglose (¡no lo calculen a mano!)</li>
+        <li><code class="inline">v-model</code> — en los inputs del formulario (repaso Lección 3)</li>
+        <li><code class="inline">@submit.prevent</code> — para enviar sin recargar (repaso Día 1)</li>
+        <li><strong>Git en equipo</strong> — ramas, commits, push y merge en un mismo repo</li>
+        <li>(Nivel 3) <code class="inline">defineModel</code> — <code class="inline">v-model</code> en un componente propio</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ PISTAS ============ -->
+  <section class="card">
+    <h2>💡 Pistas técnicas — no es la solución, es el mapa</h2>
+    <div class="tip">
+      <ul style="margin:.2rem 0;">
+        <li><strong>El dato vive en el padre.</strong> El array <code class="inline">gastos</code> es un <code class="inline">ref</code> en <code class="inline">App.vue</code>. Los hijos NO tienen su propia copia: reciben lo que necesitan por props.</li>
+        <li><strong>El hijo nunca modifica una prop.</strong> <code class="inline">ItemGasto</code> no borra ni cambia el gasto: <em>emite</em> y deja que el padre —el dueño— decida. Si intentan mutar la prop, Vue les grita por consola.</li>
+        <li><strong>El total es <code class="inline">computed</code>.</strong> <code class="inline">const total = computed(() =&gt; gastos.value.reduce((s, g) =&gt; s + g.monto, 0))</code>. Si lo guardan en una variable y lo suman a mano, tarde o temprano se desincroniza.</li>
+        <li><strong>Para <code class="inline">porCategoria</code>:</strong> recorran las 5 categorías, sumen los montos de los gastos de cada una, y el porcentaje es <code class="inline">monto / total * 100</code>. Devuelvan un arreglo de objetos.</li>
+        <li><strong>El monto del input llega como texto.</strong> Usen <code class="inline">v-model.number</code> o conviertan con <code class="inline">Number(...)</code> antes de emitir.</li>
+        <li><strong>El id lo pone el padre,</strong> no el formulario. El hijo emite el gasto <em>sin</em> id; el padre hace <code class="inline">{ id: ++idActual, ...datos }</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CÓDIGO BASE ============ -->
+  <section class="card" id="codigo">
+    <h2>📋 Código base — cópienlo para empezar</h2>
+    <p>Cinco archivos. El <strong>CSS ya viene resuelto</strong> y cada componente trae la estructura y los <code class="inline">TODO</code> de quién hace qué. Copien cada bloque a su archivo correspondiente.</p>
+
+    <h3 class="sub">🎨 Estilos de la app → <code class="inline">src/style.css</code></h3>
+    <button class="btn" onclick="copiar('css', this)">📋 Copiar CSS</button><span class="copiado-msg">✅ ¡Copiado!</span>
+    <pre style="max-height:280px"><code id="css">:root {
+  --primary: #42b883; --primary-2: #35495e; --panel: #1e293b;
+  --ink: #e2e8f0; --muted: #94a3b8; --line: #334155;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: "Segoe UI", system-ui, sans-serif;
+  background: #0f172a; color: var(--ink);
+}
+#app { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
+h1 { color: var(--primary); }
+
+.finapp { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.25rem; }
+@media (max-width: 780px) { .finapp { grid-template-columns: 1fr; } }
+.card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 12px; padding: 1.25rem 1.5rem;
+}
+.card h2 { margin-top: 0; color: var(--primary); font-size: 1.1rem; }
+
+/* Formulario */
+.fin-form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
+.fin-form input, .fin-form select {
+  padding: .55rem .7rem; border: 1px solid #cbd5e1; border-radius: 8px;
+  font-size: .95rem; background: #fff; color: #1e293b; font-family: inherit;
+}
+.fin-form input[type=text] { flex: 1; min-width: 140px; }
+.fin-form input[type=number] { width: 120px; }
+.btn {
+  background: var(--primary); color: #0f172a; border: none;
+  padding: .55rem 1rem; border-radius: 8px; font-weight: 700; cursor: pointer;
+}
+
+/* Filtro */
+.filtro { display: flex; flex-wrap: wrap; gap: .4rem; margin: 1rem 0; }
+.chip {
+  background: #334155; color: #e2e8f0; border: none; padding: .35rem .8rem;
+  border-radius: 999px; cursor: pointer; font-size: .85rem; font-weight: 600;
+}
+.chip.activa { background: var(--primary); color: #0f172a; }
+
+/* Lista de gastos */
+.gasto-item {
+  display: flex; align-items: center; gap: .6rem;
+  padding: .6rem 0; border-bottom: 1px dashed var(--line);
+}
+.gasto-item .emoji { font-size: 1.4rem; }
+.gasto-item .desc { flex: 1; font-weight: 600; }
+.gasto-item .monto { font-weight: 800; color: var(--primary); }
+.mini {
+  background: #334155; color: #e2e8f0; border: none; border-radius: 6px;
+  width: 26px; height: 26px; font-weight: 800; cursor: pointer;
+}
+.mini.del { background: #ef4444; color: #fff; }
+.vacio { color: var(--muted); font-style: italic; text-align: center; padding: 1.5rem 0; }
+
+/* Resumen */
+.total-big { font-size: 2.2rem; font-weight: 800; color: var(--primary); }
+.barra-row { margin: .6rem 0; }
+.barra-row .lbl { display: flex; justify-content: space-between; font-size: .85rem; margin-bottom: .2rem; }
+.barra { background: #0f172a; border-radius: 999px; height: 12px; overflow: hidden; }
+.barra .fill { background: var(--primary); height: 100%; border-radius: 999px; transition: width .3s; }</code></pre>
+
+    <h3 class="sub"><span class="pill j">👥 JUNTOS</span> El padre → <code class="inline">src/App.vue</code></h3>
+    <p>Solo les damos el <strong>dato acordado</strong> (las categorías) y el <code class="inline">ref</code> del estado vacío. <strong>Todo lo demás lo construyen ustedes:</strong> imports, métodos, computed y el <code class="inline">&lt;template&gt;</code>.</p>
+    <button class="btn" onclick="copiar('app', this)">📋 Copiar App.vue</button><span class="copiado-msg">✅ ¡Copiado!</span>
+    <pre style="max-height:340px"><code id="app">&lt;script setup&gt;
+import { ref, computed } from 'vue'
+// 🔨 Importen aquí sus 4 componentes cuando los tengan.
+
+// ===== CONTRATO: categorías válidas (dato acordado, NO lo inventen) =====
+const CATEGORIAS = [
+  { nombre: 'Comida',     emoji: '🍔' },
+  { nombre: 'Transporte', emoji: '🚗' },
+  { nombre: 'Súper',      emoji: '🛒' },
+  { nombre: 'Ocio',       emoji: '🎬' },
+  { nombre: 'Otros',      emoji: '📦' },
+]
+
+// El estado vive en el padre. Forma de cada gasto: { id, descripcion, monto, categoria }
+const gastos = ref([])
+
+// 🔨 CONSTRUYAN todo esto (revisen el contrato y los requisitos):
+//    · estado del filtro
+//    · métodos: agregarGasto, eliminarGasto, ajustarMonto, cambiarFiltro
+//    · computed: total, porCategoria, gastosVisibles
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;h1&gt;💸 FinTrack&lt;/h1&gt;
+  &lt;div class="finapp"&gt;
+    &lt;!-- 🔨 Izquierda (.card): FormularioGasto + FiltroCategoria + lista de ItemGasto (v-for) --&gt;
+    &lt;!-- 🔨 Derecha (.card): PanelResumen --&gt;
+    &lt;!-- Conecten props (:) y eventos (@) según el contrato. --&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+
+    <h3 class="sub"><span class="pill a">👤 A</span> Formulario → <code class="inline">src/components/FormularioGasto.vue</code></h3>
+    <button class="btn" onclick="copiar('form', this)">📋 Copiar FormularioGasto.vue</button><span class="copiado-msg">✅ ¡Copiado!</span>
+    <pre style="max-height:300px"><code id="form">&lt;script setup&gt;
+// 🔨 [A · Req 1] Reciban 'categorias' por prop (para el &lt;select&gt;).
+// 🔨 [A · Req 2] Declaren el evento 'agregar' (defineEmits).
+// 🔨 [A · Req 1] Estado del formulario con v-model (Lección 3): descripción, monto, categoría.
+// 🔨 [A · Req 2] Al enviar: validen, emitan 'agregar' con { descripcion, monto, categoria }
+//               y limpien. El hijo NO agrega a ninguna lista: solo avisa al padre.
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;!-- 🔨 [A] Un &lt;form @submit.prevent&gt; (Día 1) con: input de descripción,
+       input numérico de monto, un &lt;select&gt; de categoría (v-for sobre categorias)
+       y el botón Agregar. Clases disponibles: .fin-form, .btn --&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;</code></pre>
+
+    <h3 class="sub"><span class="pill b">👤 B</span> Fila de gasto → <code class="inline">src/components/ItemGasto.vue</code></h3>
+    <button class="btn" onclick="copiar('item', this)">📋 Copiar ItemGasto.vue</button><span class="copiado-msg">✅ ¡Copiado!</span>
+    <pre style="max-height:300px"><code id="item">&lt;script setup&gt;
+// 🔨 [B · Req 3] Reciban el gasto por prop, con validación (type Object, required).
+// 🔨 [B · Req 5] Declaren los eventos 'eliminar' y 'ajustar' (defineEmits).
+//               El hijo NO borra ni cambia el monto: SOLO emite (con el id).
+
+// Mapa de emojis por categoría (dato acordado, úsenlo):
+const emojis = { Comida:'🍔', Transporte:'🚗', 'Súper':'🛒', Ocio:'🎬', Otros:'📦' }
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;!-- 🔨 [B] Una fila con: emoji de la categoría (emojis[gasto.categoria]),
+       descripción, monto formateado, y botones  −  +  ✕  que emitan
+       ajustar(id,-500) / ajustar(id,500) / eliminar(id).
+       Clases disponibles: .gasto-item, .emoji, .desc, .monto, .mini, .mini.del --&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;</code></pre>
+
+    <h3 class="sub"><span class="pill a">👤 A</span> Resumen → <code class="inline">src/components/PanelResumen.vue</code></h3>
+    <button class="btn" onclick="copiar('resumen', this)">📋 Copiar PanelResumen.vue</button><span class="copiado-msg">✅ ¡Copiado!</span>
+    <pre style="max-height:260px"><code id="resumen">&lt;script setup&gt;
+// 🔨 [A · Req 6] Reciban por props (con validación) lo que el padre calcula:
+//    total (Number), cantidad (Number),
+//    porCategoria (Array de { nombre, emoji, monto, porcentaje }).
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;!-- 🔨 [A] Muestren: un título, el total grande, la cantidad de gastos,
+       y una barra por categoría (v-for sobre porCategoria) donde el ancho sea
+       :style="{ width: cat.porcentaje + '%' }".
+       Clases disponibles: .total-big, .barra-row, .lbl, .barra, .fill --&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;</code></pre>
+
+    <h3 class="sub"><span class="pill b">👤 B</span> Filtro → <code class="inline">src/components/FiltroCategoria.vue</code></h3>
+    <button class="btn" onclick="copiar('filtro', this)">📋 Copiar FiltroCategoria.vue</button><span class="copiado-msg">✅ ¡Copiado!</span>
+    <pre style="max-height:260px"><code id="filtro">&lt;script setup&gt;
+// 🔨 [B · Req 8] Reciban 'categorias' (Array) y 'activa' (String) por props.
+// 🔨 [B · Req 8] Declaren y emitan el evento 'filtrar' con la categoría elegida.
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;!-- 🔨 [B] Un chip "Todas" + un chip por cada categoría (v-for).
+       Marquen el activo con :class="{ activa: activa === nombre }"
+       y al @click emitan 'filtrar' con ese nombre.
+       Clases disponibles: .filtro, .chip, .chip.activa --&gt;
+&lt;/template&gt;
+
+&lt;style scoped&gt;
+&lt;/style&gt;</code></pre>
+  </section>
+
+  <!-- ============ LISTO ============ -->
+  <section class="card">
+    <h2>🏁 ¿Cuándo está "listo"?</h2>
+    <p>Su FinTrack está listo cuando pueden hacer esta demo <strong>entre los dos</strong>, sin tocar código:</p>
+    <ol>
+      <li>Escribir un gasto en el formulario (Persona A) y verlo aparecer en la lista de la izquierda.</li>
+      <li>El <strong>total</strong> de la derecha cuadra con la suma real y se actualiza solo.</li>
+      <li>Los botones <code class="inline">−</code> / <code class="inline">+</code> cambian el monto (Persona B) y el resumen reacciona al instante.</li>
+      <li><code class="inline">✕</code> elimina un gasto y las barras del resumen se recalculan.</li>
+      <li>Los chips de filtro muestran solo la categoría elegida (Nivel 3).</li>
+      <li>Todo el código está en <strong>un solo repositorio</strong>, con commits de <strong>los dos</strong> integrantes en el historial.</li>
+    </ol>
+    <div class="tip">Si los 6 pasos funcionan: <strong>felicitaciones, construyeron una app de finanzas con componentes que se comunican, y la armaron como un equipo real.</strong> 🎉</div>
+    <div class="warn"><strong>Ojo:</strong> los archivos <code class="inline">.vue</code> <strong>no</strong> se abren con doble clic en el navegador — necesitan el proyecto Vite corriendo (<code class="inline">npm run dev</code>). Lo único que se publica en GitHub Pages es <strong>esta página de instrucciones</strong>.</div>
+  </section>
+
+  <footer>
+    Módulo 6 · Lección 4 · Día 2 · Ejercicio en pareja — FinTrack · Props y Eventos entre Componentes Vue.
+  </footer>
+
+</main>
+
+<script>
+  function copiar(id, btn) {
+    const texto = document.getElementById(id).textContent
+    const msg = btn.nextElementSibling
+    const mostrar = () => { if (msg) { msg.style.display = 'inline'; setTimeout(() => msg.style.display = 'none', 2200) } }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(mostrar).catch(() => fallback(texto, mostrar))
+    } else {
+      fallback(texto, mostrar)
+    }
+  }
+  function fallback(texto, cb) {
+    const ta = document.createElement('textarea')
+    ta.value = texto; ta.style.position = 'fixed'; ta.style.opacity = '0'
+    document.body.appendChild(ta); ta.focus(); ta.select()
+    try { document.execCommand('copy') } catch (e) {}
+    document.body.removeChild(ta); cb()
+  }
+</script>
+</body>
+</html>

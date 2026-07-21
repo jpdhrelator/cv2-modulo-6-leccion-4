@@ -1,0 +1,134 @@
+/* ============================================================
+   Lección 4 · Día 2 · Props y Eventos entre Componentes
+   Ejercicio en pareja — FinTrack (control de gastos)
+   Hoja de estilos de la PÁGINA DE INSTRUCCIONES.
+   Paleta basada en los colores oficiales de Vue.
+   ============================================================ */
+
+:root {
+  --bg: #0f172a;
+  --panel: #1e293b;
+  --panel-2: #334155;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --primary: #42b883;   /* verde Vue */
+  --primary-2: #35495e; /* azul Vue */
+  --accent: #38bdf8;
+  --warn: #fbbf24;
+  --error: #f87171;
+  --line: #334155;
+  --radius: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ---------- Cabecera / hero ---------- */
+header.hero {
+  background: linear-gradient(135deg, var(--primary-2), #0f172a);
+  padding: 2.5rem 1.5rem;
+  border-bottom: 3px solid var(--primary);
+}
+header.hero h1 { margin: 0 0 .5rem; font-size: 1.9rem; }
+header.hero p { margin: 0; color: var(--muted); max-width: 68ch; }
+.badge {
+  display: inline-block; background: var(--primary); color: #0f172a;
+  font-weight: 700; font-size: .75rem; padding: .2rem .6rem;
+  border-radius: 999px; margin-bottom: 1rem; letter-spacing: .5px;
+}
+
+/* ---------- Contenido ---------- */
+main { max-width: 940px; margin: 0 auto; padding: 2rem clamp(1rem, 4vw, 3rem); }
+
+section.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2rem;
+  scroll-margin-top: 1rem;
+}
+section.card > h2 {
+  margin-top: 0; color: var(--primary);
+  border-bottom: 1px solid var(--line); padding-bottom: .6rem;
+}
+h3.sub { color: var(--accent); margin-top: 1.75rem; }
+
+/* ---------- Cajas de nota ---------- */
+.concept {
+  background: rgba(56,189,248,.08);
+  border-left: 4px solid var(--accent);
+  padding: .9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+}
+.concept strong { color: var(--accent); }
+.tip {
+  background: rgba(66,184,131,.10);
+  border-left: 4px solid var(--primary);
+  padding: .9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+}
+.warn {
+  background: rgba(251,191,36,.10);
+  border-left: 4px solid var(--warn);
+  padding: .9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+}
+.danger {
+  background: rgba(248,113,113,.10);
+  border-left: 4px solid var(--error);
+  padding: .9rem 1.1rem; border-radius: 0 8px 8px 0; margin: 1rem 0;
+}
+
+/* ---------- Código ---------- */
+code.inline {
+  background: #0b1220; color: var(--primary);
+  padding: .1rem .4rem; border-radius: 5px; font-size: .9em;
+}
+pre {
+  background: #0b1220; border: 1px solid var(--line);
+  border-radius: 8px; padding: 1rem; overflow-x: auto;
+  font-size: .85rem; line-height: 1.5;
+}
+pre code { color: #cbd5e1; font-family: "Fira Code", Consolas, monospace; white-space: pre; }
+
+/* ---------- Botones ---------- */
+.btn {
+  background: var(--primary); color: #0f172a; border: none;
+  padding: .6rem 1.2rem; border-radius: 8px; font-weight: 700;
+  cursor: pointer; font-size: .95rem;
+}
+.btn:hover { filter: brightness(1.05); }
+.btn.ghost { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+.copiado-msg { margin-left: .6rem; color: var(--primary); font-weight: 700; display: none; }
+
+/* ---------- Píldoras de persona ---------- */
+.pill { display:inline-block; background:#e2e8f0; color:#334155; padding:.15rem .6rem; border-radius:999px; font-size:.8rem; margin:.1rem; font-weight:700; }
+.pill.a { background:#bae6fd; color:#075985; }
+.pill.b { background:#fde68a; color:#854d0e; }
+.pill.j { background:#bbf7d0; color:#166534; }
+
+/* ---------- Tablas de contrato ---------- */
+table.contrato { width:100%; border-collapse: collapse; margin:.8rem 0; font-size:.9rem; }
+table.contrato th, table.contrato td { border:1px solid var(--line); padding:.5rem .7rem; text-align:left; }
+table.contrato th { background:#0b1220; color:var(--accent); }
+table.contrato td code { color: var(--primary); }
+
+/* ---------- Árbol de componentes ---------- */
+.arbol {
+  background:#0b1220; border:1px solid var(--line); border-radius:8px;
+  padding:1rem 1.2rem; font-family:"Fira Code",monospace; font-size:.85rem;
+  color:#cbd5e1; overflow-x:auto; line-height:1.7;
+}
+.arbol .a { color:#7dd3fc; font-weight:700; }
+.arbol .b { color:#fcd34d; font-weight:700; }
+.arbol .j { color:#86efac; font-weight:700; }
+
+footer { padding: 2rem 1.5rem; color: var(--muted); border-top: 1px solid var(--line); text-align:center; }
+
+/* Listas un poco más aireadas */
+main ol > li, main ul > li { margin: .3rem 0; }
