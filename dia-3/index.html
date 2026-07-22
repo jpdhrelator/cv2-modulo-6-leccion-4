@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🏆 Desafío Final · Proyecto Integrador Vue (L1–L4) · Elige tu misión</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<header class="hero">
+  <div class="badge hot">MÓDULO 6 · LECCIÓN 4 · DÍA 3 · DESAFÍO FINAL EN PAREJA</div>
+  <h1>🏆 Proyecto Integrador — Elige tu misión</h1>
+  <p>Este es el jefe final del módulo. En <strong>parejas</strong>, van a construir una app Vue completa que junta <strong>todo</strong> lo de las Lecciones 1, 2, 3 y 4: componentes, directivas, formularios, estado reactivo, comunicación entre componentes y despliegue real. Eligen <strong>una</strong> de las dos misiones, se reparten el trabajo, lo unen en un repo Git… y lo publican en internet. No hay código de ejemplo: <strong>esto lo construyen ustedes desde cero.</strong></p>
+</header>
+
+<main>
+
+  <!-- ============ REGLAS DEL DESAFÍO ============ -->
+  <section class="card">
+    <h2>📜 Reglas del desafío</h2>
+    <ol>
+      <li><strong>Equipo de 2.</strong> No se turnan un teclado: cada persona es <strong>dueña de sus componentes</strong> y responde por ellos.</li>
+      <li><strong>Eligen UNA misión</strong> (más abajo): 🔵 <strong>TriviaLab</strong> o 🟣 <strong>Deck Forge</strong>. Las dos piden exactamente lo mismo a nivel técnico; elijan la que más los entretenga.</li>
+      <li><strong>Un solo repositorio Git</strong> compartido, con commits de <strong>los dos</strong> integrantes en el historial.</li>
+      <li><strong>Se despliega a internet</strong> (GitHub Pages). Un proyecto que no se puede abrir con un link, no está terminado.</li>
+      <li><strong>Sin código regalado.</strong> Acá hay instrucciones, arquitectura y contratos. La solución la escriben ustedes. Pueden volver a sus apuntes y ejercicios de las lecciones 1 a 4 — es más, deben hacerlo.</li>
+    </ol>
+    <div class="warn"><strong>Este proyecto es tu carta de presentación.</strong> Cuando alguien pregunte "¿qué sabes hacer en Vue?", le mandas este link. Háganlo con orgullo.</div>
+  </section>
+
+  <!-- ============ ELIGE TU MISIÓN ============ -->
+  <section class="card">
+    <h2>🎯 Elige tu misión</h2>
+    <div class="pick-grid">
+      <div class="pick a">
+        <h3>🔵 Misión A · TriviaLab</h3>
+        <div class="tagline">Tu propio Kahoot casero.</div>
+        <p>Un <strong>editor</strong> donde arman un banco de preguntas y un <strong>modo jugar</strong> que las recorre, mide el puntaje, la racha y el tiempo. La mitad crea, la mitad juega.</p>
+        <p style="color:var(--muted);font-size:.85rem">Ideal si les gusta la lógica de juego y el estado que cambia en vivo.</p>
+      </div>
+      <div class="pick b">
+        <h3>🟣 Misión B · Deck Forge</h3>
+        <div class="tagline">Constructor de mazos de cartas.</div>
+        <p>Un <strong>catálogo</strong> de cartas con buscador y filtros, y un <strong>panel de mazo</strong> con límites, cantidades y estadísticas (curva de maná, coste promedio) que se calculan solas.</p>
+        <p style="color:var(--muted);font-size:.85rem">Ideal si les gustan los datos, los filtros y las métricas visuales.</p>
+      </div>
+    </div>
+    <div class="tip">Lean las <strong>dos</strong> misiones completas antes de decidir. Cuando elijan, salten directo a la sección de esa misión, pero <strong>vuelvan</strong> a las secciones comunes de abajo (conceptos obligatorios, Git, deploy y rúbrica): esas aplican a las dos por igual.</div>
+  </section>
+
+  <!-- ============ MISIÓN A ============ -->
+  <section class="card mision a" id="mision-a">
+    <h2>🔵 Misión A · TriviaLab</h2>
+
+    <h3 class="sub">🎬 La historia</h3>
+    <p><strong>Profe Marce</strong> hace clases y está aburrida de pagar por apps de trivia para repasar con su curso. Les pidió su propia app: una donde ella <strong>arme las preguntas</strong> y después <strong>juegue</strong> con el curso, viendo el puntaje subir en pantalla. Ustedes se la construyen.</p>
+
+    <h3 class="sub">🖥️ Qué van a construir</h3>
+    <pre class="ascii">┌─ TriviaLab ──────────────────────────────────────────┐
+│  ( ✏️ CREAR )              ( ▶️ JUGAR )                │
+├──────────────────────────────────────────────────────┤
+│  MODO CREAR                                           │
+│  Enunciado: [ ¿Capital de Chile? ]                    │
+│  Opciones:  [Lima][Santiago][Quito][Cusco]            │
+│  Correcta:  ○ ○ ● ○     Dificultad:(Fácil▾)  Pts:[10] │
+│  Categoría: ☑ Geografía  [ + Agregar al banco ]       │
+│  ── Banco (12 preguntas) ──  filtro:(Todas)(Fácil)…   │
+│  🟢 ¿Capital…?  Geografía  ✏️editar  ✕                │
+│  🔴 ¿Año de…?   Historia   ✏️editar  ✕                │
+├──────────────────────────────────────────────────────┤
+│  MODO JUGAR — pregunta 3 / 12                         │
+│  ¿Capital de Chile?     ⏱ 8s   Racha: 3🔥            │
+│  [ Lima ] [ Santiago ] [ Quito ] [ Cusco ]           │
+│  Puntaje: 240        (al final: resumen + reiniciar)  │
+└──────────────────────────────────────────────────────┘</pre>
+
+    <h3 class="sub">🧩 Arquitectura — 3 niveles de componentes</h3>
+    <p>Esta es la vuelta de tuerca del día de hoy: ya no es padre-hijo, es <strong>abuelo → padre → hijo</strong>. El estado vive arriba y baja por props; los avisos suben por eventos, nivel por nivel.</p>
+    <div class="arbol">App.vue  <span class="j">· ABUELO — dueño del estado (reactive) · lo integran JUNTOS</span>
+│  <span class="n">controla el modo (crear / jugar) y persiste en localStorage</span>
+│
+├─ EditorTrivia.vue      <span class="a">· 👤 A</span>
+│   ├─ FormPregunta.vue  <span class="a">· 👤 A</span>  <span class="n">→ emite @crear (v-model de todo el formulario)</span>
+│   └─ BancoPreguntas.vue <span class="a">· 👤 A</span>
+│       └─ PreguntaCard.vue <span class="a">· 👤 A</span> <span class="n">(×N) → emite @editar / @eliminar</span>
+│
+└─ JuegoTrivia.vue       <span class="b">· 👤 B</span>
+    ├─ TarjetaPregunta.vue <span class="b">· 👤 B</span>
+    │   └─ OpcionRespuesta.vue <span class="b">· 👤 B</span> <span class="n">(×4) → emite @responder</span>
+    └─ Marcador.vue      <span class="b">· 👤 B</span> <span class="n">← recibe :puntaje :racha por props</span></div>
+
+    <h3 class="sub">👥 Reparto del trabajo</h3>
+    <p><span class="pill a">👤 A — El Editor</span> Todo lo de <strong>crear y gestionar</strong> el banco de preguntas: el formulario completo, la lista, editar y borrar, y los filtros.</p>
+    <p><span class="pill b">👤 B — El Juego</span> Todo lo de <strong>jugar</strong>: recorrer preguntas, marcar correctas/incorrectas, puntaje, racha, tiempo y pantalla final.</p>
+    <p><span class="pill j">👥 JUNTOS — App.vue</span> El estado compartido (banco de preguntas + resultado), el cambio entre modo crear/jugar y la persistencia. Es el punto de integración.</p>
+
+    <h3 class="sub">📜 Contrato de integración (acuérdenlo ANTES de teclear)</h3>
+    <p>La <strong>forma de cada pregunta</strong> (el objeto que A crea y B consume):</p>
+    <table class="contrato">
+      <tr><th>Campo</th><th>Tipo</th><th>Ejemplo de valor</th></tr>
+      <tr><td><code>id</code></td><td>número único</td><td>7</td></tr>
+      <tr><td><code>enunciado</code></td><td>texto</td><td>¿Capital de Chile?</td></tr>
+      <tr><td><code>opciones</code></td><td>lista de textos</td><td>Lima · Santiago · Quito · Cusco</td></tr>
+      <tr><td><code>correcta</code></td><td>número (índice de la opción correcta)</td><td>1</td></tr>
+      <tr><td><code>dificultad</code></td><td>texto (Fácil · Media · Difícil)</td><td>Fácil</td></tr>
+      <tr><td><code>categoria</code></td><td>texto</td><td>Geografía</td></tr>
+      <tr><td><code>puntos</code></td><td>número</td><td>10</td></tr>
+    </table>
+    <p><strong>Eventos y props que deben acordar</strong> (los nombres son de ustedes, pero tienen que coincidir en los dos lados):</p>
+    <ul>
+      <li><code class="inline">FormPregunta</code> emite <strong>crear</strong> con el objeto pregunta (sin id; el abuelo pone el id).</li>
+      <li><code class="inline">PreguntaCard</code> emite <strong>editar</strong> y <strong>eliminar</strong> con el id.</li>
+      <li><code class="inline">OpcionRespuesta</code> emite <strong>responder</strong> con el índice elegido.</li>
+      <li><code class="inline">Marcador</code> recibe <strong>puntaje</strong> y <strong>racha</strong> por props.</li>
+    </ul>
+
+    <h3 class="sub">✅ Requisitos por niveles</h3>
+    <p><strong>🟢 Nivel 1 — El banco (obligatorio).</strong></p>
+    <ol>
+      <li><span class="pill a">A</span> Formulario para crear una pregunta con <strong>varios tipos de input</strong>: texto (enunciado y opciones), <code class="inline">select</code> (dificultad), <code class="inline">radio</code> (cuál opción es la correcta), <code class="inline">number</code> (puntos) y <code class="inline">checkbox</code> o texto para la categoría. No se agregan preguntas vacías.</li>
+      <li><span class="pill a">A</span> El banco muestra todas las preguntas (una tarjeta por pregunta) con su dificultad y categoría, y permite <strong>eliminar</strong>.</li>
+      <li><span class="pill j">A+B</span> El estado de las preguntas vive en <code class="inline">App.vue</code> y baja por props a los dos lados.</li>
+    </ol>
+    <p><strong>🟡 Nivel 2 — Jugar y gestionar.</strong></p>
+    <ol start="4">
+      <li><span class="pill a">A</span> <strong>Editar</strong> una pregunta existente y <strong>filtrar</strong> el banco por dificultad y/o categoría (con un valor derivado, no a mano).</li>
+      <li><span class="pill b">B</span> Modo <strong>jugar</strong>: recorre las preguntas una por una; al elegir opción, marca en <strong>verde/rojo</strong> si acertó (con clases dinámicas) y avanza. Suma <strong>puntaje</strong> según los puntos de la pregunta.</li>
+      <li><span class="pill b">B</span> Pantalla <strong>final</strong>: muestra el puntaje total y un botón para <strong>reiniciar</strong> la partida.</li>
+    </ol>
+    <p><strong>🔴 Nivel 3 — Para lucirse.</strong></p>
+    <ol start="7">
+      <li><span class="pill b">B</span> <strong>Racha</strong> (respuestas seguidas correctas) y <strong>temporizador</strong> por pregunta que descuenta tiempo.</li>
+      <li><span class="pill a">A</span> <strong>Barajar</strong> el orden de las preguntas y/o de las opciones antes de jugar.</li>
+      <li><span class="pill j">A+B</span> <strong>Persistencia</strong>: el banco sobrevive al recargar (se guarda solo).</li>
+    </ol>
+  </section>
+
+  <!-- ============ MISIÓN B ============ -->
+  <section class="card mision b" id="mision-b">
+    <h2>🟣 Misión B · Deck Forge</h2>
+
+    <h3 class="sub">🎬 La historia</h3>
+    <p><strong>Beto</strong> juega un juego de cartas y arma sus mazos en una servilleta. Suma mal el coste, mete cartas repetidas de más y nunca sabe si su mazo está balanceado. Les pidió una <strong>fragua de mazos</strong>: que explore las cartas, arme su mazo con reglas, y vea al instante si está bien construido.</p>
+
+    <h3 class="sub">🖥️ Qué van a construir</h3>
+    <pre class="ascii">┌─ Deck Forge ─────────────────────────────────────────┐
+│  Buscar:[ dragón ]  Tipo:(Todas▾) Coste:(▾) Rareza:(▾)│
+├───────────────────────────────┬──────────────────────┤
+│  CATÁLOGO                      │  MI MAZO   (18 / 30)  │
+│  ☘ Goblin      1🔵  [ + ]     │  ☘ Goblin      ×2  −+ │
+│  🐉 Dragón      8🔵  [ + ]     │  🔥 Bola de f. ×1  −+ │
+│  🔥 Bola de f.  4🔵  [ + ]     │  ── Estadísticas ──   │
+│  (borde de color según rareza) │  Coste medio: 3.4     │
+│  Común · Rara · Épica          │  Curva: ▁▃▅▇▅▃▁       │
+│                                │  Criatura 60% Hechizo…│
+│  (si no hay resultados:        │  ⚠ Máx 2 copias/carta │
+│   "Ninguna carta coincide")    │  [ Guardar mazo ]     │
+└───────────────────────────────┴──────────────────────┘</pre>
+
+    <h3 class="sub">🧩 Arquitectura — 3 niveles de componentes</h3>
+    <p>La vuelta de tuerca de hoy: <strong>abuelo → padre → hijo</strong>. El estado vive arriba y baja por props; los avisos suben por eventos, nivel por nivel.</p>
+    <div class="arbol">App.vue  <span class="j">· ABUELO — dueño del estado (reactive) · lo integran JUNTOS</span>
+│  <span class="n">catálogo de cartas + mazo actual · persiste en localStorage</span>
+│
+├─ Catalogo.vue         <span class="a">· 👤 A</span>
+│   ├─ BuscadorFiltros.vue <span class="a">· 👤 A</span>  <span class="n">→ emite @filtrar (v-model búsqueda + selects)</span>
+│   └─ CartaCatalogo.vue   <span class="a">· 👤 A</span> <span class="n">(×N) → emite @agregar</span>
+│
+└─ PanelMazo.vue        <span class="b">· 👤 B</span>
+    ├─ CartaMazo.vue     <span class="b">· 👤 B</span> <span class="n">(×N) → emite @quitar / @ajustar</span>
+    └─ StatsMazo.vue     <span class="b">· 👤 B</span> <span class="n">← recibe :mazo por props (calcula todo)</span></div>
+
+    <h3 class="sub">👥 Reparto del trabajo</h3>
+    <p><span class="pill a">👤 A — El Catálogo</span> Todo lo de <strong>explorar</strong>: mostrar las cartas, el buscador por nombre y los filtros por tipo, coste y rareza.</p>
+    <p><span class="pill b">👤 B — El Mazo</span> Todo lo de <strong>construir</strong>: la lista del mazo con cantidades, los límites/reglas y las estadísticas que se calculan solas.</p>
+    <p><span class="pill j">👥 JUNTOS — App.vue</span> El catálogo base, el mazo compartido y la persistencia. Es el punto de integración.</p>
+
+    <h3 class="sub">📜 Contrato de integración (acuérdenlo ANTES de teclear)</h3>
+    <p>La <strong>forma de cada carta</strong>:</p>
+    <table class="contrato b">
+      <tr><th>Campo</th><th>Tipo</th><th>Ejemplo de valor</th></tr>
+      <tr><td><code>id</code></td><td>número único</td><td>14</td></tr>
+      <tr><td><code>nombre</code></td><td>texto</td><td>Dragón de fuego</td></tr>
+      <tr><td><code>emoji</code></td><td>texto</td><td>🐉</td></tr>
+      <tr><td><code>tipo</code></td><td>texto (Criatura · Hechizo · Trampa)</td><td>Criatura</td></tr>
+      <tr><td><code>coste</code></td><td>número (0 a 10)</td><td>8</td></tr>
+      <tr><td><code>rareza</code></td><td>texto (Común · Rara · Épica)</td><td>Épica</td></tr>
+    </table>
+    <p>En el <strong>mazo</strong>, cada entrada guarda además la <code>cantidad</code> (cuántas copias). <strong>Reglas del mazo</strong>, acuérdenlas: máximo <strong>30</strong> cartas en total y máximo <strong>2</strong> copias de la misma carta.</p>
+    <p><strong>Eventos y props que deben acordar:</strong></p>
+    <ul>
+      <li><code class="inline">BuscadorFiltros</code> emite <strong>filtrar</strong> con lo buscado (texto + filtros).</li>
+      <li><code class="inline">CartaCatalogo</code> emite <strong>agregar</strong> con la carta (o su id).</li>
+      <li><code class="inline">CartaMazo</code> emite <strong>quitar</strong> y <strong>ajustar</strong> con el id.</li>
+      <li><code class="inline">StatsMazo</code> recibe <strong>mazo</strong> por prop y calcula todo internamente.</li>
+    </ul>
+
+    <h3 class="sub">✅ Requisitos por niveles</h3>
+    <p><strong>🟢 Nivel 1 — El catálogo y el mazo (obligatorio).</strong></p>
+    <ol>
+      <li><span class="pill a">A</span> Muestra el catálogo completo (una carta por ítem) con nombre, emoji, tipo, coste y rareza. El <strong>borde/color</strong> de la carta cambia según la rareza (clase dinámica).</li>
+      <li><span class="pill a">A</span> <strong>Buscador por nombre</strong> en vivo (a medida que se escribe se filtra la lista).</li>
+      <li><span class="pill b">B</span> Agregar una carta al mazo la muestra en el panel derecho; el mazo vive en <code class="inline">App.vue</code> y baja por props.</li>
+    </ol>
+    <p><strong>🟡 Nivel 2 — Reglas y gestión.</strong></p>
+    <ol start="4">
+      <li><span class="pill a">A</span> <strong>Filtros</strong> por tipo, coste y rareza (con valores derivados). Si nada coincide, muestra "Ninguna carta coincide".</li>
+      <li><span class="pill b">B</span> En el mazo: subir/bajar <strong>cantidad</strong> y quitar cartas. Respetar las <strong>reglas</strong> (máx 30 totales, máx 2 copias) con aviso visual cuando se topan.</li>
+      <li><span class="pill b">B</span> <strong>Estadísticas básicas</strong>: cantidad total de cartas y <strong>coste promedio</strong> del mazo (calculados, no a mano).</li>
+    </ol>
+    <p><strong>🔴 Nivel 3 — Para lucirse.</strong></p>
+    <ol start="7">
+      <li><span class="pill b">B</span> <strong>Curva de maná</strong>: una barra por cada coste (0…10) con la cantidad de cartas de ese coste, y <strong>distribución por tipo</strong> en porcentaje.</li>
+      <li><span class="pill a">A</span> Ordenar el catálogo (por coste o por nombre) y contador de resultados visibles.</li>
+      <li><span class="pill j">A+B</span> <strong>Persistencia</strong>: el mazo sobrevive al recargar. Extra: guardar el mazo con un nombre y volver a cargarlo.</li>
+    </ol>
+  </section>
+
+  <!-- ============ CONCEPTOS OBLIGATORIOS (COMÚN) ============ -->
+  <section class="card">
+    <h2>🧠 Conceptos obligatorios — deben aparecer SÍ o SÍ</h2>
+    <p>Elijan la misión que elijan, su proyecto tiene que <strong>demostrar todo lo del módulo</strong>. Esta es la lista con la que se van a autoevaluar. Márquenla:</p>
+
+    <h3 class="sub"><span class="pill l1">Lección 1</span> Componentes y reactividad base</h3>
+    <ul class="checklist">
+      <li>Proyecto Vite con varios componentes <code class="inline">.vue</code> separados, importados y usados</li>
+      <li><code class="inline">ref</code> para estado simple y <code class="inline">computed</code> para valores derivados</li>
+      <li><code class="inline">&lt;style scoped&gt;</code> en los componentes</li>
+    </ul>
+
+    <h3 class="sub"><span class="pill l2">Lección 2</span> Directivas de render</h3>
+    <ul class="checklist">
+      <li><code class="inline">v-for</code> con <code class="inline">:key</code> (la lista de preguntas / cartas)</li>
+      <li><code class="inline">v-if</code> / <code class="inline">v-else</code> y <code class="inline">v-show</code> (estados vacíos, cambio de modo/pantalla)</li>
+      <li><code class="inline">:class</code> dinámico (verde/rojo de acierto · color por rareza)</li>
+      <li><code class="inline">v-bind</code> / <code class="inline">:</code> en atributos</li>
+    </ul>
+
+    <h3 class="sub"><span class="pill l3">Lección 3</span> Formularios + estado reactivo + deploy</h3>
+    <ul class="checklist">
+      <li><code class="inline">v-model</code> en <strong>varios tipos</strong> de input (text, number, select, radio y/o checkbox)</li>
+      <li>Modificadores de <code class="inline">v-model</code>: <code class="inline">.number</code>, <code class="inline">.trim</code> y/o <code class="inline">.lazy</code></li>
+      <li><code class="inline">reactive</code> para el estado de negocio y <code class="inline">ref</code> para el estado de UI</li>
+      <li><code class="inline">computed</code> para los derivados (filtros, total, promedio, curva…)</li>
+      <li><code class="inline">watch</code> + <code class="inline">localStorage</code> para la persistencia</li>
+      <li>Build de producción y <strong>deploy a GitHub Pages</strong></li>
+    </ul>
+
+    <h3 class="sub"><span class="pill l4">Lección 4</span> Eventos y comunicación entre componentes</h3>
+    <ul class="checklist">
+      <li>Eventos con modificadores: <code class="inline">@submit.prevent</code>, y algún <code class="inline">.stop</code> / <code class="inline">.enter</code> / <code class="inline">.once</code> donde tenga sentido</li>
+      <li><code class="inline">defineProps</code> con validación (type / required / default)</li>
+      <li><code class="inline">defineEmits</code> y <code class="inline">emit</code> con payload</li>
+      <li>Arquitectura de <strong>3 niveles</strong> (abuelo → padre → hijo) con datos que bajan y eventos que suben</li>
+      <li>Comunicación entre <strong>hermanos</strong> vía el componente padre/abuelo</li>
+    </ul>
+  </section>
+
+  <!-- ============ GIT (COMÚN) ============ -->
+  <section class="card">
+    <h2>🔀 Trabajar en equipo con Git</h2>
+    <p>Igual que la clase anterior: <strong>un solo repo</strong>, cada quien en su rama y sobre sus propios archivos (por eso separamos en componentes: para no chocar en el merge).</p>
+    <ol>
+      <li><strong>Una persona</strong> crea el proyecto Vite, lo sube a un repo nuevo en GitHub y <strong>agrega a la otra como colaboradora</strong>. La otra lo clona.</li>
+      <li>Cada quien trabaja en su rama (por ejemplo <code class="inline">feat/persona-a</code> y <code class="inline">feat/persona-b</code>), con <strong>commits pequeños y frecuentes</strong> de mensaje claro.</li>
+      <li>Al terminar sus componentes, abren un <strong>Pull Request</strong> hacia <code class="inline">main</code>, lo revisan juntos y le hacen merge.</li>
+      <li>La <strong>integración en <code class="inline">App.vue</code></strong> (conectar todo) la hacen juntos al final. Prueben el flujo completo antes del último push.</li>
+    </ol>
+    <div class="tip">En la rúbrica se mira el historial: tienen que verse commits de <strong>los dos</strong>. Un repo con commits de una sola persona = el equipo no funcionó.</div>
+  </section>
+
+  <!-- ============ DEPLOY (COMÚN) ============ -->
+  <section class="card">
+    <h2>🚀 Publicar en internet (GitHub Pages)</h2>
+    <p>El proyecto no está listo hasta que se abra con un link. Repasen la guía de <strong>Build &amp; Deploy de la Lección 3</strong> y publiquen a GitHub Pages. Recuerden los dos puntos que siempre se olvidan:</p>
+    <ul>
+      <li>Hacer el <strong>build de producción</strong> antes de publicar.</li>
+      <li>Configurar la <strong>ruta base</strong> del proyecto en la config de Vite para que los archivos carguen bajo <code class="inline">usuario.github.io/repo/</code> (si no, la página sale en blanco). Ese fue el error clásico de la clase pasada.</li>
+    </ul>
+    <div class="warn">Cuando esté publicado, <strong>peguen el link en el README</strong> del repo. Ese link es lo que entregan.</div>
+  </section>
+
+  <!-- ============ PISTAS CONCEPTUALES (COMÚN) ============ -->
+  <section class="card">
+    <h2>💡 Pistas conceptuales — el mapa, no la solución</h2>
+    <div class="tip">
+      <ul style="margin:.2rem 0;">
+        <li><strong>El estado vive arriba.</strong> El abuelo (<code class="inline">App.vue</code>) es el único dueño de los datos de verdad (el banco de preguntas / el catálogo y el mazo). Los hijos y nietos <strong>no</strong> tienen copias: reciben lo que necesitan por props y piden cambios por eventos.</li>
+        <li><strong>Un hijo NUNCA modifica una prop.</strong> Emite y deja que el dueño decida. Si un nieto necesita avisar al abuelo, el aviso <strong>sube nivel por nivel</strong> (nieto → padre → abuelo).</li>
+        <li><strong><code class="inline">reactive</code> vs <code class="inline">ref</code>:</strong> los datos de negocio (la colección) encajan bien en <code class="inline">reactive</code>; el estado de UI suelto (el texto del buscador, el modo actual) en <code class="inline">ref</code>. No hay una única respuesta correcta, pero <strong>justifíquenla</strong>.</li>
+        <li><strong><code class="inline">computed</code> vs <code class="inline">watch</code>:</strong> si necesitan un <em>valor</em> derivado (total, promedio, lista filtrada) → <code class="inline">computed</code>. Si necesitan <em>ejecutar una acción</em> cuando algo cambia (guardar en localStorage) → <code class="inline">watch</code>. No calculen totales a mano: se desincronizan.</li>
+        <li><strong>El id lo pone el dueño</strong> (el abuelo), no el formulario.</li>
+        <li><strong>Empiecen por el contrato.</strong> Antes de escribir un solo componente, acuerden la forma del objeto y los nombres de eventos/props. Ese acuerdo es lo que hace que sus mitades encajen sin pelear.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ RÚBRICA / LISTO (COMÚN) ============ -->
+  <section class="card">
+    <h2>🏁 ¿Cuándo está "listo"?</h2>
+    <p>Su proyecto está terminado cuando pueden hacer esta demo <strong>entre los dos</strong>, desde el <strong>link publicado</strong>:</p>
+    <ol>
+      <li>Se abre desde un <strong>link de GitHub Pages</strong> (no desde el computador de ustedes).</li>
+      <li>Uno crea/agrega contenido (pregunta o carta) y el otro lo ve reflejado al instante (comunicación entre componentes funcionando).</li>
+      <li>Los valores derivados (puntaje/racha · total/coste/curva) <strong>cuadran</strong> y se actualizan solos.</li>
+      <li>Los estados condicionales funcionan: vacío, error/límite, cambio de modo o pantalla.</li>
+      <li>Al recargar la página, <strong>los datos siguen ahí</strong> (persistencia).</li>
+      <li>El repo tiene commits de <strong>los dos</strong> integrantes y el README trae el link publicado.</li>
+    </ol>
+    <div class="tip">Si los 6 pasos funcionan: <strong>construyeron y publicaron una app Vue real, en equipo, aplicando el módulo completo. Ese es el nivel.</strong> 🎉</div>
+    <div class="danger"><strong>Recuerden:</strong> los archivos <code class="inline">.vue</code> no se abren con doble clic — necesitan el proyecto corriendo (<code class="inline">npm run dev</code>) o el <strong>build publicado</strong>. Lo que entregan es el <strong>link</strong> + el repo.</div>
+  </section>
+
+  <footer>
+    Módulo 6 · Lección 4 · Día 3 · Desafío Final Integrador (Lecciones 1–4) · Vue en equipo, de principio a producción.
+  </footer>
+
+</main>
+
+</body>
+</html>
