@@ -1,0 +1,15 @@
+.tv-game { background:linear-gradient(160deg,#1e293b,#0f172a); color:#e2e8f0; border-radius:14px; padding:1.4rem; }
+.tv-hud { display:flex; justify-content:space-between; font-size:.82rem; color:#94a3b8; margin-bottom:.5rem; }
+.tv-hud b { color:#42b883; }
+.tv-progress { height:8px; background:#0f172a; border-radius:999px; overflow:hidden; margin-bottom:1rem; }
+.tv-progress > i { display:block; height:100%; background:#38bdf8; transition:width .3s; }
+.tv-timer { text-align:center; font-size:1.6rem; font-weight:800; margin-bottom:.6rem; }
+.tv-timer.urgente { color:#f87171; }
+.tv-question { font-size:1.15rem; font-weight:700; margin:0 0 1rem; text-align:center; }
+.tv-options { display:grid; gap:.6rem; }
+.tv-option { text-align:left; background:#334155; color:#e2e8f0; border:2px solid transparent; padding:.8rem 1rem; border-radius:10px; font-size:.95rem; cursor:pointer; }
+.tv-option.correcta { background:rgba(66,184,131,.25); border-color:#42b883; color:#86efac; }
+.tv-option.incorrecta { background:rgba(248,113,113,.2); border-color:#f87171; color:#fca5a5; }
+.tv-center { text-align:center; padding:1rem; }
+.tv-big { font-size:3rem; font-weight:800; color:#42b883; }
+.tv-btn { background:#42b883; color:#0f172a; border:none; padding:.7rem 1.6rem; border-radius:10px; font-weight:800; font-size:1rem; cursor:pointer; margin-top:.8rem; }
